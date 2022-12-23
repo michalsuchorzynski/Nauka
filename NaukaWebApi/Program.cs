@@ -1,16 +1,19 @@
+using Microsoft.EntityFrameworkCore;
 using NaukaWebApi.Data;
 using NaukaWebApi.Services.PersonService;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IPersonService, PersonService>();
 
-builder.Services.AddDbContext<DataContext>();
+builder.Services.AddDbContext<DataContext>
+(
+    options => options.UseSqlServer("Server=localhost;Database=Nauka;Trusted_Connection=true;TrustServerCertificate=true;")
+);
 
 var app = builder.Build();
 

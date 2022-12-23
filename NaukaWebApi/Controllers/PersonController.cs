@@ -58,8 +58,15 @@ namespace NaukaWebApi.Controllers
         [Route("Post")]
         public async Task<ActionResult<Person>> Post(Person person)
         {
-            await this.personService.CreateAsync(person);
-            return CreatedAtAction("Get", new { id = person.Id }, person);
+            try
+            {
+                await this.personService.CreateAsync(person);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+            return NoContent();
         }
 
         [HttpDelete]

@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NaukaWebApi.Data;
 
@@ -10,9 +11,11 @@ using NaukaWebApi.Data;
 namespace NaukaWebApi.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20221224151028_AddOneToOneRelation")]
+    partial class AddOneToOneRelation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,30 +24,13 @@ namespace NaukaWebApi.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("NaukaWebApi.Models.Company", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Companies");
-                });
-
             modelBuilder.Entity("NaukaWebApi.Models.Passport", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("PassportId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PassportId"));
 
                     b.Property<string>("Country")
                         .IsRequired()
@@ -57,12 +43,12 @@ namespace NaukaWebApi.Migrations
                     b.Property<int>("PersonId")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.HasKey("PassportId");
 
                     b.HasIndex("PersonId")
                         .IsUnique();
 
-                    b.ToTable("Passports");
+                    b.ToTable("Passport");
                 });
 
             modelBuilder.Entity("NaukaWebApi.Models.Person", b =>
@@ -84,21 +70,6 @@ namespace NaukaWebApi.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("People");
-                });
-
-            modelBuilder.Entity("NaukaWebApi.Models.PersonCompany", b =>
-                {
-                    b.Property<int>("PersonId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CompanyId")
-                        .HasColumnType("int");
-
-                    b.HasKey("PersonId", "CompanyId");
-
-                    b.HasIndex("CompanyId");
-
-                    b.ToTable("PersonCompanies");
                 });
 
             modelBuilder.Entity("NaukaWebApi.Models.Phone", b =>
@@ -134,25 +105,6 @@ namespace NaukaWebApi.Migrations
                     b.Navigation("Person");
                 });
 
-            modelBuilder.Entity("NaukaWebApi.Models.PersonCompany", b =>
-                {
-                    b.HasOne("NaukaWebApi.Models.Company", "Company")
-                        .WithMany("PersonCompanies")
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("NaukaWebApi.Models.Person", "Person")
-                        .WithMany("PersonCompanies")
-                        .HasForeignKey("PersonId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Company");
-
-                    b.Navigation("Person");
-                });
-
             modelBuilder.Entity("NaukaWebApi.Models.Phone", b =>
                 {
                     b.HasOne("NaukaWebApi.Models.Person", "Person")
@@ -164,17 +116,10 @@ namespace NaukaWebApi.Migrations
                     b.Navigation("Person");
                 });
 
-            modelBuilder.Entity("NaukaWebApi.Models.Company", b =>
-                {
-                    b.Navigation("PersonCompanies");
-                });
-
             modelBuilder.Entity("NaukaWebApi.Models.Person", b =>
                 {
                     b.Navigation("Passport")
                         .IsRequired();
-
-                    b.Navigation("PersonCompanies");
 
                     b.Navigation("Phones");
                 });

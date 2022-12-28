@@ -8,18 +8,23 @@ namespace NaukaWebApi.Controllers
     [ApiController]
     public class PersonController : ControllerBase
     {
-        private readonly IPersonService personService;
+        private readonly ILogger<PersonController> _logger;
+        private readonly IPersonService _personService;
 
-        public PersonController(IPersonService personService)
+
+        public PersonController(ILogger<PersonController> logger, IPersonService personService)
         {
-            this.personService = personService;
+            this._logger = logger;
+            this._personService = personService;
+            _logger.LogInformation("PersonController init");
         }
 
         [HttpGet]
         [Route("GetPeople")]
         public async Task<ActionResult<IEnumerable<Person>>> GetPeople()
         {
-            IEnumerable<Person> result = await this.personService.GetAllAsync();
+            _logger.LogInformation("PersonController execute GetPeople");
+            IEnumerable<Person> result = await this._personService.GetAllAsync();
             if (result.Any())
             {
                 return Ok(result);
@@ -31,7 +36,7 @@ namespace NaukaWebApi.Controllers
         [Route("Get")]
         public async Task<ActionResult<Person>> Get(int id)
         {
-            Person person = await this.personService.GetByIdAsync(id);
+            Person person = await this._personService.GetByIdAsync(id);
             if (person == null)
             {
                 return NotFound();
@@ -45,7 +50,7 @@ namespace NaukaWebApi.Controllers
         {
             try
             {
-                await this.personService.UpdateAsync(person);
+                await this._personService.UpdateAsync(person);
             }
             catch (Exception ex)
             {
@@ -60,7 +65,7 @@ namespace NaukaWebApi.Controllers
         {
             try
             {
-                await this.personService.CreateAsync(person);
+                await this._personService.CreateAsync(person);
             }
             catch (Exception ex)
             {
@@ -73,8 +78,8 @@ namespace NaukaWebApi.Controllers
         [Route("DeletePerson/{id}")]
         public async Task<ActionResult<Person>> DeletePerson(int id)
         {
-            Person person = await this.personService.GetByIdAsync(id);
-            await this.personService.DeleteAsync(person);
+            Person person = await this._personService.GetByIdAsync(id);
+            await this._personService.DeleteAsync(person);
             return person;
         }
     }

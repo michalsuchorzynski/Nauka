@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NaukaTests.MockData;
 using NaukaWebApi.Controllers;
@@ -12,9 +13,10 @@ namespace NaukaTests.Tests.Controllers
         [Fact]
         public async Task GetPeople_ShouldReturn200Status()
         {
+            Mock<ILogger<PersonController>> loggerMoq = new Mock<ILogger<PersonController>>();
             Mock<IPersonService> personService = new Mock<IPersonService>();
             personService.Setup(_ => _.GetAllAsync()).ReturnsAsync(PersonMockData.GetPeople());
-            PersonController sut = new PersonController(personService.Object);
+            PersonController sut = new PersonController(loggerMoq.Object, personService.Object);
 
             var result = await sut.GetPeople();
             var okResult = result.Result as OkObjectResult;
@@ -25,9 +27,10 @@ namespace NaukaTests.Tests.Controllers
         [Fact]
         public async Task Post_ShouldReturn200Status()
         {
+            Mock<ILogger<PersonController>> loggerMoq = new Mock<ILogger<PersonController>>();
             Mock<IPersonService> personService = new Mock<IPersonService>();
             Person newPerson = PersonMockData.NewPerson();
-            PersonController sut = new PersonController(personService.Object);
+            PersonController sut = new PersonController(loggerMoq.Object, personService.Object);
 
             var result = await sut.Post(newPerson);
             var okResult = result.Result as NoContentResult;
